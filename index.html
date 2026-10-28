@@ -16,7 +16,7 @@
 
     <div class="hud">
       <p id="puntos">🪙 Puntos: 0</p>
-      <p id="contador">Intentos: 0</p>
+      <p id="contador">Intentos: 0/7</p>
       <p id="record">🏆 Récord: --</p>
     </div>
 
@@ -32,6 +32,11 @@
       🔄 Siguiente nivel
     </button>
   </div>
+
+  <!-- Sonidos: inicio.mp3, ganar.mp3 y perder.mp3 van en la misma carpeta -->
+  <audio id="sonidoInicio" src="INICIO.mp3"></audio>
+  <audio id="sonidoGanar" src="GANA.mp3"></audio>
+  <audio id="sonidoPerder" src="PIERDE.mp3"></audio>
 
   <script src="Script.js"></script>
 </body>

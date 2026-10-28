@@ -14,6 +14,7 @@ const record = document.getElementById('record');
 console.log('Elementos conectados:', inputIntento, btnAdivinar, mensaje);
 
 // --- Variables del juego ---
+const MAX_INTENTOS = 7;
 let numeroSecreto = Math.floor(Math.random() * 100) + 1;
 let intentos = 0;
 let historialIntentos = [];
@@ -21,6 +22,31 @@ let puntaje = 0;          // monedas acumuladas entre niveles
 let mejorIntentos = null; // récord: menos intentos para ganar
 
 console.log('(DEBUG) Número secreto:', numeroSecreto);
+
+// --- Sonidos ---
+const sonidoInicio = document.getElementById('sonidoInicio');
+const sonidoGanar = document.getElementById('sonidoGanar');
+const sonidoPerder = document.getElementById('sonidoPerder');
+
+sonidoInicio.volume = 0.3; // suave para no tapar el juego
+let inicioSonado = false;
+
+function reproducir(sonido) {
+  sonido.currentTime = 0;
+  sonido.play().catch(function() {});
+}
+
+// Suena al abrir la página. Si el navegador lo bloquea,
+// suena en el primer clic o tecla del jugador.
+function sonarInicio() {
+  if (inicioSonado) return;
+  sonidoInicio.play()
+    .then(function() { inicioSonado = true; })
+    .catch(function() {});
+}
+sonarInicio();
+document.addEventListener('click', sonarInicio);
+document.addEventListener('keydown', sonarInicio);
 
 // --- Tu primera función ---
 function mostrarMensaje(texto, color) {
@@ -43,7 +69,7 @@ function verificarIntento() {
 
   // Incrementar contador
   intentos++;
-  contador.textContent = 'Intentos: ' + intentos;
+  contador.textContent = 'Intentos: ' + intentos + '/' + MAX_INTENTOS;
 
   // Agregar al historial
   historialIntentos.push(valor);
@@ -53,6 +79,9 @@ function verificarIntento() {
   let pista = obtenerPista(valor, numeroSecreto);
 
   if (valor === numeroSecreto) {
+    sonidoInicio.pause();
+    reproducir(sonidoGanar);
+
     // Monedas: 100 si aciertas al primer intento, -10 por cada intento extra (mínimo 10)
     let ganadas = Math.max(100 - (intentos - 1) * 10, 10);
     puntaje += ganadas;
@@ -76,9 +105,25 @@ function verificarIntento() {
     mostrarMensaje('⬇️ ¡Muy bajo! Salta más arriba. ' + pista, '#1565c0');
   }
 
+  // Si falló, revisar si se acabaron los intentos
+  if (valor !== numeroSecreto) {
+    verificarGameOver();
+  }
+
   // Limpiar input y enfocar
   inputIntento.value = '';
   inputIntento.focus();
+}
+
+// --- Límite de intentos ---
+function verificarGameOver() {
+  if (intentos >= MAX_INTENTOS) {
+    sonidoInicio.pause();
+    reproducir(sonidoPerder);
+    mostrarMensaje('💀 ¡Game Over! Era el ' + numeroSecreto, '#c62828');
+    btnAdivinar.disabled = true;
+    btnReiniciar.style.display = 'inline-block';
+  }
 }
 
 // --- Conectar eventos ---
@@ -97,7 +142,7 @@ function reiniciarJuego() {
   intentos = 0;
   historialIntentos = [];
 
-  contador.textContent = 'Intentos: 0';
+  contador.textContent = 'Intentos: 0/' + MAX_INTENTOS;
   historial.textContent = 'Historial: ';
   mostrarMensaje('🍄 ¡Nuevo nivel! Adivina el número...', '#c62828');
 
@@ -109,7 +154,7 @@ function reiniciarJuego() {
   // Resetear celebración visual
   tarjeta.style.borderColor = '#1a1a1a';
   tarjeta.style.boxShadow = '0 8px 0 #1a1a1a';
-
+  reproducir(sonidoInicio);
   console.log('(DEBUG) Nuevo número secreto:', numeroSecreto);
 }
 
