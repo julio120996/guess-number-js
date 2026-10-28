@@ -1,37 +1,89 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  color: #eee;
-  padding: 20px;
+  background-color: #5c94fc; /* cielo de Mario */
+  color: #1a1a1a;
+  padding: 20px 20px 90px; /* espacio para el suelo */
+}
+
+/* Nube */
+body::before {
+  content: "";
+  position: fixed;
+  top: 40px;
+  left: 8%;
+  width: 90px;
+  height: 26px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 26px -14px 0 2px #ffffff;
+  pointer-events: none;
+}
+
+/* Suelo de ladrillos */
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64px;
+  background-color: #c84c0c;
+  background-image:
+    linear-gradient(#1a1a1a 2px, transparent 2px),
+    linear-gradient(90deg, #1a1a1a 2px, transparent 2px);
+  background-size: 32px 32px;
+  border-top: 4px solid #1a1a1a;
+  pointer-events: none;
 }
 
 .game-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(233, 69, 96, 0.3);
-  border-radius: 20px;
-  padding: 40px 30px;
-  max-width: 420px;
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+  border: 4px solid #1a1a1a;
+  border-radius: 8px;
+  padding: 36px 26px;
+  max-width: 440px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 0 #1a1a1a;
   transition: border-color 0.5s, box-shadow 0.5s;
 }
 
 h1 {
-  color: #e94560;
-  font-size: 1.8rem;
-  margin-bottom: 8px;
+  color: #d32f2f;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  text-shadow: 3px 3px 0 #1a1a1a;
+  margin-bottom: 14px;
 }
 
 .subtitle {
-  color: #aaa;
-  margin-bottom: 24px;
+  color: #333333;
+  font-size: 10px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+/* Marcador tipo Mario */
+.hud {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-size: 9px;
+  line-height: 1.6;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
 }
 
 .controls {
@@ -42,20 +94,21 @@ h1 {
 }
 
 input {
+  font-family: inherit;
   padding: 12px;
-  font-size: 18px;
-  width: 100px;
+  font-size: 16px;
+  width: 110px;
   text-align: center;
-  border: 2px solid rgba(233, 69, 96, 0.4);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #eee;
+  border: 3px solid #1a1a1a;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1a1a1a;
   outline: none;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 input:focus {
-  border-color: #e94560;
-  box-shadow: 0 0 12px rgba(233, 69, 96, 0.3);
+  border-color: #d32f2f;
+  box-shadow: 0 0 12px rgba(211, 47, 47, 0.6);
 }
 /* Ocultar flechas del input numérico */
 input::-webkit-inner-spin-button,
@@ -63,20 +116,22 @@ input::-webkit-outer-spin-button { -webkit-appearance: none; }
 input[type=number] { -moz-appearance: textfield; }
 
 button {
-  padding: 12px 24px;
-  font-size: 18px;
-  background-color: #e94560;
-  color: white;
-  border: none;
-  border-radius: 12px;
+  font-family: inherit;
+  padding: 12px 18px;
+  font-size: 12px;
+  background-color: #d32f2f;
+  color: #ffffff;
+  border: 3px solid #1a1a1a;
+  border-bottom-width: 6px;
+  border-radius: 6px;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.3s;
 }
 button:hover {
-  background-color: #d63d56;
+  background-color: #b71c1c;
   transform: translateY(-2px);
 }
-button:active { transform: translateY(1px); }
+button:active { transform: translateY(2px); }
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -84,25 +139,31 @@ button:disabled {
 }
 
 #mensaje {
-  font-size: 24px;
+  font-size: 12px;
+  line-height: 1.8;
   margin: 20px 0;
-  min-height: 40px;
-  transition: font-size 0.3s;
+  min-height: 70px;
 }
 
 #historial {
   margin-top: 20px;
-  font-size: 14px;
-  color: #aaa;
+  font-size: 9px;
+  line-height: 1.8;
+  color: #333333;
 }
 
 #btnReiniciar {
-  background-color: #0f3460;
-  margin-top: 12px;
+  background-color: #2e7d32; /* verde tubo */
+  margin-top: 14px;
+}
+#btnReiniciar:hover {
+  background-color: #1b5e20;
 }
 
 @media (max-width: 480px) {
-  .game-card { padding: 30px 20px; }
+  .game-card { padding: 28px 16px; }
+  h1 { font-size: 0.95rem; }
+  .hud { justify-content: center; }
   .controls { flex-direction: column; align-items: center; }
   input { width: 80%; }
   button { width: 80%; }
